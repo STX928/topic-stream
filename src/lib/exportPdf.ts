@@ -81,7 +81,7 @@ export function buildSubmissionsPdf(rows: PdfRow[]) {
 
   rows.forEach((r, i) => {
     const topicLines = doc.splitTextToSize(r.topic || "—", 62) as string[];
-    const nameLines = doc.splitTextToSize(r.name, 52) as string[];
+    const nameLines = doc.splitTextToSize(r.name, 48) as string[];
     const lines = Math.max(topicLines.length, nameLines.length);
     const rowH = 5 + lines * 4;
 
