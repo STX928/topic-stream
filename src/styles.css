@@ -159,3 +159,24 @@
     color: var(--color-foreground);
   }
 }
+
+@utility mesh {
+  background-image:
+    linear-gradient(to right, oklch(0.86 0.13 175 / 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, oklch(0.86 0.13 175 / 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+
+@utility pulse-dot {
+  animation: pulse-dot 1.6s ease-in-out infinite;
+}
