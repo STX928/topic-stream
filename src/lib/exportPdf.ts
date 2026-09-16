@@ -63,7 +63,7 @@ function tableHead(doc: jsPDF, y: number) {
   return y + 8;
 }
 
-export function exportSubmissionsPdf(rows: PdfRow[]) {
+export function buildSubmissionsPdf(rows: PdfRow[]) {
   const doc = new jsPDF({ unit: "mm", format: "a4" });
   const now = new Date();
   const pad = (n: number) => String(n).padStart(2, "0");
@@ -138,5 +138,11 @@ export function exportSubmissionsPdf(rows: PdfRow[]) {
     doc.text("end of transmission", M + 22, H - M - 3);
   }
 
-  doc.save(`submissions-${generated.replace(/[: ]/g, "-")}.pdf`);
+  return { doc, filename: `submissions-${generated.replace(/[: ]/g, "-")}.pdf` };
 }
+
+export function exportSubmissionsPdf(rows: PdfRow[]) {
+  const { doc, filename } = buildSubmissionsPdf(rows);
+  doc.save(filename);
+}
+
