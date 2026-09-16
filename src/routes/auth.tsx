@@ -17,7 +17,6 @@ export const Route = createFileRoute("/auth")({
 
 function AuthPage() {
   const navigate = useNavigate();
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -33,24 +32,13 @@ function AuthPage() {
     e.preventDefault();
     setError(null);
     setBusy(true);
-    const result =
-      mode === "signin"
-        ? await supabase.auth.signInWithPassword({ email, password })
-        : await supabase.auth.signUp({
-            email,
-            password,
-            options: { emailRedirectTo: window.location.origin },
-          });
+    const result = await supabase.auth.signInWithPassword({ email, password });
     setBusy(false);
     if (result.error) {
       setError(result.error.message);
       return;
     }
-    if (result.data.session) {
-      void navigate({ to: "/console", replace: true });
-    } else {
-      setError("Check your email to confirm the account, then sign in.");
-    }
+    void navigate({ to: "/console", replace: true });
   }
 
   return (
@@ -60,10 +48,10 @@ function AuthPage() {
           / owner access
         </p>
         <h1 className="mt-3 text-2xl leading-tight font-semibold tracking-tight">
-          {mode === "signin" ? "Sign in to the console" : "Create the owner account"}
+          Sign in to the console
         </h1>
         <p className="mt-2 font-mono text-[11px] text-muted-foreground">
-          The first account created becomes the owner.
+          Single owner account · new sign-ups are closed.
         </p>
 
         <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
@@ -78,6 +66,7 @@ function AuthPage() {
               id="email"
               type="email"
               required
+              autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full rounded-md bg-ink px-3.5 py-2.5 text-sm ring-1 ring-edge focus:ring-2 focus:ring-signal/60 focus:outline-none"
@@ -94,7 +83,7 @@ function AuthPage() {
               id="password"
               type="password"
               required
-              minLength={8}
+              autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full rounded-md bg-ink px-3.5 py-2.5 text-sm ring-1 ring-edge focus:ring-2 focus:ring-signal/60 focus:outline-none"
@@ -105,7 +94,7 @@ function AuthPage() {
             disabled={busy}
             className="w-full rounded-md bg-signal px-3 py-2.5 text-sm font-semibold text-ink ring-1 ring-signal/40 transition-shadow hover:ring-2 hover:ring-signal/70 disabled:opacity-60"
           >
-            {busy ? "Working…" : mode === "signin" ? "Sign in" : "Create account"}
+            {busy ? "Working…" : "Sign in"}
           </button>
           {error && (
             <p className="font-mono text-[12px] text-destructive" role="alert">
@@ -113,18 +102,8 @@ function AuthPage() {
             </p>
           )}
         </form>
-
-        <button
-          type="button"
-          onClick={() => {
-            setMode(mode === "signin" ? "signup" : "signin");
-            setError(null);
-          }}
-          className="mt-5 font-mono text-[11px] text-muted-foreground hover:text-signal"
-        >
-          {mode === "signin" ? "No account yet? Create one" : "Already have an account? Sign in"}
-        </button>
       </div>
     </div>
   );
 }
+

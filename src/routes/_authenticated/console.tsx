@@ -2,6 +2,8 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { exportSubmissionsPdf } from "@/lib/exportPdf";
+
 
 export const Route = createFileRoute("/_authenticated/console")({
   head: () => ({
@@ -148,6 +150,22 @@ function ConsolePage() {
             <span className="rounded-md bg-signal/10 px-3 py-2 font-mono text-[11px] text-signal ring-1 ring-signal/30">
               {rows.length} records
             </span>
+            <button
+              type="button"
+              onClick={() =>
+                exportSubmissionsPdf(
+                  rows.map((s) => ({
+                    name: s.student_name,
+                    topic: titleById[s.topic_id] ?? "—",
+                    timestamp: fmt(s.created_at),
+                  })),
+                )
+              }
+              className="rounded-md bg-signal px-3 py-2 font-mono text-[11px] font-semibold text-ink ring-1 ring-signal/40 transition-shadow hover:ring-2 hover:ring-signal/70"
+            >
+              export pdf
+            </button>
+
             <button
               type="button"
               onClick={() => void signOut()}
